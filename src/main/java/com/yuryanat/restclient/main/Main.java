@@ -33,11 +33,9 @@ public class Main {
         allUsers.forEach(System.err::println);
 
         /*Create new user*/
-        User newUser = new User("RestClient", "", "RestClient", "RestClient@domain.com");
-        Set<Role> role = new HashSet<>(Arrays.asList(new Role("USER"),new Role("ADMIN")));
-        newUser.setRoles(role);
-        restTemplate.postForObject("http://localhost:8181/rest/admin/add/",newUser,User.class);
-
-
+//        User newUser = new User("RestClient", "", "RestClient", "RestClient@domain.com");
+//        Set<Role> role = new HashSet<>(Arrays.asList(new Role("USER"),new Role("ADMIN")));
+//        newUser.setRoles(role);
+//        restTemplate.postForObject("http://localhost:8181/rest/admin/add/",newUser,User.class);
     }
 }
