@@ -1,5 +1,6 @@
 package com.yuryanat.restclient.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class User {
         this.email = email;
     }
 
-    public User(int id, String login, String password, String name, String email, Set<Role> roles) {
+    public User(Integer id, String login, String password, String name, String email, Set<Role> roles) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -37,7 +38,7 @@ public class User {
         this.email = email;
         this.roles = roles;
     }
-    public User(int id, String login, String password, String name, String email) {
+    public User(Integer id, String login, String password, String name, String email) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -45,11 +46,11 @@ public class User {
         this.email = email;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

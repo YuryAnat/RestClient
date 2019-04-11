@@ -1,18 +1,25 @@
 package com.yuryanat.restclient.main;
 
+import ch.qos.logback.core.net.ObjectWriter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yuryanat.restclient.models.Role;
 import com.yuryanat.restclient.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@JsonIgnoreProperties
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Main {
     public static void main(String[] args) {
 
@@ -33,9 +40,11 @@ public class Main {
         allUsers.forEach(System.err::println);
 
         /*Create new user*/
-//        User newUser = new User("RestClient", "", "RestClient", "RestClient@domain.com");
-//        Set<Role> role = new HashSet<>(Arrays.asList(new Role("USER"),new Role("ADMIN")));
-//        newUser.setRoles(role);
-//        restTemplate.postForObject("http://localhost:8181/rest/admin/add/",newUser,User.class);
+        User newUser = new User("RestClient", "", "RestClient", "RestClient@domain.com");
+        Set<Role> role = new HashSet<>(Arrays.asList(new Role("USER"),new Role("ADMIN")));
+        newUser.setRoles(role);
+        ObjectMapper om = new ObjectMapper();
+        om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        restTemplate.postForObject("http://localhost:8181/rest/admin/add/",newUser,User.class);
     }
 }

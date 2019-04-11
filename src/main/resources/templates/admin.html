@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Home page</title>
-    <link rel='stylesheet' href='/static/css/bootstrap.min.css'>
-    <script src="/static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
-    <script src="/static/js/bootstrap.min.js" th:src="@{/static/js/bootstrap.min.js}"></script>
-    <script src="/static/js/admin.js" th:src="@{/static/js/admin.js}"></script>
+    <link rel='stylesheet' href='/css/bootstrap.min.css'>
+    <script src="/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script src="/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+    <script src="/js/modal.js" th:src="@{/js/modal.js}"></script>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand text-white">Task5_Spring</a>
+    <a class="navbar-brand text-white">RestClient</a>
     <form class="form-inline my-2 my-lg-0">
         <a style="color: white" th:href="@{/logout}">Logout</a>
     </form>
@@ -48,7 +48,7 @@
             </ul>
             <div class="tab-content" id="tabContent">
                 <div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="listUsers">
-                    <table class="table table-striped" id="user-table">
+                    <table class="table table-striped">
                         <tr>
                             <th class="col-*">Id</th>
                             <th class="col-*">Login</th>
@@ -57,6 +57,23 @@
                             <th class="col-*">Roles</th>
                             <th class="col-*">Edit</th>
                             <th class="col-*">Delete</th>
+                        </tr>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.id}"></td>
+                            <td th:text="${user.login}"></td>
+                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td>
+                                <span th:each="role : ${user.roles}" th:text="${role.role}+' '"></span>
+                            </td>
+                            <td>
+                                <button class="btn-info btn btn-sm" type="button" data-toggle="modal" data-target="#editUser"
+                                        th:attr="data-target='#editUser', data-id=${user.id}, data-login=${user.login}, data-name=${user.name}, data-email=${user.email}">Edit
+                                </button>
+                            </td>
+                            <td>
+                                <a th:href="@{'/admin/delete?id=' + ${user.id}}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -69,23 +86,24 @@
                         </div>
                         <div class="row justify-content-center">
                             <div class="col-6">
-                                <form id="addFormUser">
-                                    <label>Login</label>
-                                    <input id="newLogin" class="form-control" name="login" value="" type="text">
+                                <form method="post" action="/admin/add" class="form-group">
+                                    <label>Login name</label>
+                                    <input class="form-control" name="login" value="" type="text">
                                     <label>Password</label>
-                                    <input id="newPassword" class="form-control" name="password" value="" type="password">
+                                    <input class="form-control" name="password" value="" type="password">
                                     <label>Confirm password</label>
                                     <input class="form-control" name="confPassword" value="" type="password">
-                                    <label>Name</label>
-                                    <input id="newName" class="form-control" name="name" value="" type="text">
+                                    <label>Nick name</label>
+                                    <input class="form-control" name="name" value="" type="text">
                                     <label>eMail</label>
-                                    <input id="newEmail" class="form-control" name="email" value="" type="email">
+                                    <input class="form-control" name="email" value="" type="email">
                                     <label>Role</label>
-                                    <input class="roles" id="roleUser" type="checkbox" name="roles" value="USER" checked>USER
-                                    <input class="roles" id="roleAdmin" type="checkbox" name="roles" value="ADMIN">ADMIN<br>
+                                    <input id="roleUser" type="checkbox" name="roles" value="USER" checked>USER
+                                    <input id="roleAdmin" type="checkbox" name="roles" value="ADMIN">ADMIN<br>
                                     <div class="row justify-content-center">
                                         <div class="col-5">
-                                            <button class="add-user btn btn-success" type="button">Add user</button>
+                                            <button class="btn btn-success" type="submit" name="add">Add new user
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
@@ -96,7 +114,7 @@
                 <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="editUser"
                      aria-hidden="true">
                     <div class="modal-dialog" role="document">
-                        <form id="editFormUser" class="form-group">
+                        <form class="form-group" action="/admin/edit" method="post">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5>Edit user</h5>
@@ -105,28 +123,28 @@
                                     <div class="align-items-center align-content-center">
                                         <label class="form-text">Id</label>
                                     </div>
-                                    <input id="id" name="id" value="" type="text" readonly
+                                    <input id="id" name="id" value="" type="text"
                                            class="disabled form-control bg-light">
-                                    <label class="form-text">Login name</label>
+                                    <label class="form-text">Login</label>
                                     <input id="login" name="login" value="" type="text" class="form-control">
                                     <label class="form-text">Password</label>
                                     <input name="password" value="" type="password" class="form-control">
                                     <label class="form-text">Confirm password</label>
                                     <input name="confPassword" value="" type="password" class="form-control">
-                                    <label class="form-text">Nick name</label>
+                                    <label class="form-text">Name</label>
                                     <input id="name" name="name" value="" type="text" class="form-control">
                                     <label class="form-text">eMail</label>
                                     <input id="email" name="email" value="" type="email" class="form-control">
                                     <label class="form-text">Role</label>
                                     <div class="form-inline">
-                                        <input class="editRoles" type="checkbox" name="roles" value="USER" checked>USER
-                                        <input class="editRoles" type="checkbox" name="roles" value="ADMIN">ADMIN<br>
+                                        <input type="checkbox" name="roles" value="USER" checked>USER
+                                        <input type="checkbox" name="roles" value="ADMIN">ADMIN<br>
                                     </div>
                                     <br>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="edit-button btn btn-success" type="button">Edit user</button>
-                                    <button type="button" class="b-close btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button class="btn btn-success" type="submit" name="edit">Edit user</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </form>

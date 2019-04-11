@@ -5,14 +5,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Role {
-    int id;
+    Integer id;
     private String role;
     private Set<User> users;
 
     public Role() {
     }
 
-    public Role(int id, String role, Set<User> users) {
+    public Role(Integer id, String role, Set<User> users) {
         this.id = id;
         this.role = role;
         this.users = users;
@@ -32,11 +32,11 @@ public class Role {
         users.add(user);
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
