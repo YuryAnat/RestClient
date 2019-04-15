@@ -1,12 +1,23 @@
 package com.yuryanat.restclient.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
+@Table(name = "role")
 public class Role {
-    Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @Column(name = "role")
     private String role;
+
+    @JsonBackReference
+    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.MERGE, CascadeType.PERSIST},fetch = FetchType.EAGER)
     private Set<User> users;
 
     public Role() {
