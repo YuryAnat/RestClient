@@ -30,7 +30,7 @@
         </nav>
         <nav>
             <br>
-            User: <span th:text="${user.username}"></span>
+            User: <span th:text="${user}"></span>
             <br>
             Role: <span th:each="role : ${roles}" th:text="${role}+' '"></span>
             <br>

@@ -5,12 +5,14 @@ import com.yuryanat.restclient.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,7 @@ public class UserController {
         return "redirect:/admin";
     }
 
-    @PostMapping(value = {"/admin/edit"}, params = {"id", "login", "password", "confPassword", "name", "email", "roles"})
+    @PostMapping(value = {"/admin/edit"})
     public String editUser(@ModelAttribute("user") User editedUser) {
         service.updateUser(editedUser);
         return "redirect:/admin";
@@ -52,9 +54,11 @@ public class UserController {
     @GetMapping(value = {"/"})
     public String viewAllUsersPage(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            if (authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ADMIN")))
+            if (authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ADMIN"))
+                    | authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN")))
                 return "redirect:/admin";
-            if (authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("USER")))
+            if (authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("USER"))
+                    | authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER")))
                 return "redirect:/user";
         }
         return "redirect:/login";
@@ -66,9 +70,15 @@ public class UserController {
     }
 
     @GetMapping(value = "/user")
-    public String userInfo(Model model, Authentication au){
-        model.addAttribute("roles",au.getAuthorities().stream().map(s -> ((GrantedAuthority) s).getAuthority()).collect(Collectors.toList()));
-        model.addAttribute("user",au.getPrincipal());
+    public String userInfo(Model model, Authentication au) {
+        Object object = au.getPrincipal();
+        if (object instanceof User) {
+            model.addAttribute("roles", au.getAuthorities().stream().map(s -> ((GrantedAuthority) s).getAuthority()).collect(Collectors.toList()));
+            model.addAttribute("user", ((User) au.getPrincipal()).getLogin());
+        } else if (object instanceof UserDetails) {
+            model.addAttribute("roles", ((UserDetails) object).getAuthorities());
+            model.addAttribute("user", ((UserDetails) object).getUsername());
+        }
         return "userInfo";
     }
 

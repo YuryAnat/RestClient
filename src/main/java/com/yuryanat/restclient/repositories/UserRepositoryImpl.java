@@ -8,6 +8,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -67,12 +68,18 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserByLogin(String login) {
-        return entityManager.createQuery("from User where login = :login", User.class).setParameter("login", login).getSingleResult();
+        User user = null;
+        try {
+            user = entityManager.createQuery("from User where login = :login", User.class).setParameter("login", login).getSingleResult();
+        }catch (NoResultException e){
+            /*NOOPE*/
+        }
+        return user;
     }
 
     @Override
     public List<User> getAllUsers() {
-        HttpEntity<List<User>> httpEntity = new HttpEntity(headers);
+        HttpEntity httpEntity = new HttpEntity(headers);
         ResponseEntity<List<User>> response = restTemplate.exchange(
                 "http://localhost:8181/rest/admin/",
                 HttpMethod.GET,

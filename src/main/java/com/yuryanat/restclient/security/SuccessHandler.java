@@ -20,9 +20,11 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Collection<? extends GrantedAuthority> authorities
                 = authentication.getAuthorities();
-        if (authorities.stream().filter(r -> r.getAuthority().equals("ADMIN")).count() > 0) {
+        if (authorities.stream().filter(r -> r.getAuthority().equals("ADMIN")).count() > 0 ||
+                authorities.stream().filter(r -> r.getAuthority().equals("ROLE_ADMIN")).count() > 0) {
             redirectStrategy.sendRedirect(request, response, "/admin");
-        } else if (authorities.stream().filter(r -> r.getAuthority().equals("USER")).count() > 0) {
+        } else if (authorities.stream().filter(r -> r.getAuthority().equals("USER")).count() > 0 ||
+                authorities.stream().filter(r -> r.getAuthority().equals("ROLE_USER")).count() > 0) {
             redirectStrategy.sendRedirect(request, response, "/user");
         } else {
             throw new IllegalStateException();
